@@ -21,10 +21,16 @@ async function CreateUser(req, res) {
       $or: [{ username: username }, { mail: mail }],
     });
 
+    let photofilename;
+    if (req.file) {
+      photofilename = `${Date.now()}.jpeg`;
+    }
+
     if (crossVerify.length === 0) {
       const hashedPWD = bcrypt.hashSync(password, 10);
       const saveUser = new dataModel({
         username,
+        photo: photofilename,
         password: hashedPWD,
         mail: mail.toLowerCase(),
       });
@@ -43,12 +49,15 @@ async function CreateUser(req, res) {
 
 async function DeleteUser(req, res) {
   const { id } = req.body;
+
   if (!id) return res.status(400).json({ Alert: "ID not provided" });
+
   const findbyID = await dataModel.findOne({ _id: id });
+
   if (!findbyID) {
     return res.status(400).json({ Alert: `User with ID ${id} not found` });
   } else {
-    await dataModel.deleteOne(findbyID);
+    await dataModel.deleteOne({ _id: convertInt });
     return res.status(200).json({ Alert: `User ${id} deleted` });
   }
 }

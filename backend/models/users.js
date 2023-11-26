@@ -20,6 +20,11 @@ const userSchema = mongoose.Schema(
       trim: true,
       default: "",
     },
+    photo: {
+      type: String,
+      unique: true,
+      default: "",
+    },
   },
   { timestamps: true }
 );

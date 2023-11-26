@@ -7,6 +7,7 @@ function Users() {
   const [users, setUsers] = useState([]);
   const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
+  const [error, setError] = useState("");
 
   const gettheID = useRef();
   async function GetUsers() {
@@ -28,9 +29,19 @@ function Users() {
   async function DeleteItem(id) {
     try {
       setLoading(true);
-      await Axios.delete(`http://localhost:8000/main`, { params: { id } });
-
-      GetUsers();
+      await Axios.post(
+        `http://localhost:8000/main`,
+        { Headers: { "Content-Type": "multipart/form-data" } },
+        { params: id }
+      )
+        .then((r) => {
+          if (r.status === 200) {
+            setStatus(`${id} Deleted`);
+          }
+        })
+        .catch((e) => {
+          setError(e.response.data);
+        });
     } catch (err) {
       console.error(err);
     } finally {
@@ -82,6 +93,8 @@ function Users() {
           <br />
         </div>
       ))}
+      <p>{error !== "" ? error : ""}</p>
+      <p>{status && typeof status === "object" ? status.Alert : status}</p>
       <p>
         Not registered yet? <Link to="/register">Click Here</Link>
       </p>

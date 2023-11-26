@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Axios from "axios";
 
 const Register = () => {
@@ -8,6 +8,7 @@ const Register = () => {
     password: "",
     mail: "",
   });
+  const [photo, setPhoto] = useState();
   const [status, setStatus] = useState("");
 
   const handleInputChange = (e) => {
@@ -16,6 +17,7 @@ const Register = () => {
   };
 
   const handleSubmit = async (e) => {
+    setStatus("");
     e.preventDefault();
     try {
       setLoading(true);
@@ -23,16 +25,18 @@ const Register = () => {
         username: user.username,
         password: user.password,
         mail: user.mail,
+        photo: photo,
       });
 
       if (response.status === 201) {
         setStatus("Account Created");
-      } else {
-        setStatus("Error");
+      } else if (response.status === 409) {
+        setStatus(
+          "User already exists , Please try using a different Email or Username"
+        );
       }
     } catch (err) {
       console.error(err);
-      setStatus("Error");
     } finally {
       setLoading(false);
     }
@@ -63,6 +67,12 @@ const Register = () => {
           placeholder="Enter mail"
           type="email"
         />
+        <input
+          onChange={(e) => {
+            setPhoto(e.target.files[0]);
+          }}
+          type="file"
+        ></input>
         <br />
         <button type="submit">{loading ? "Loading..." : "Create User"}</button>
       </form>
