@@ -1,6 +1,25 @@
 const dataModel = require("../models/users");
 const bcrypt = require("bcrypt");
 
+async function FindByUsername() {
+  const { username } = req.params;
+  const convertedString = String(username);
+
+  if (!username)
+    return res.status(400).json({ Alert: "Username not provided" });
+
+  const findbyusername = await dataModel.findOne({ username: convertedString });
+
+  if (!findbyusername) {
+    return res
+      .status(400)
+      .json({ Alert: `User with username ${username} not found` });
+  } else {
+    await dataModel.updateOne({ username: convertedString });
+    return res.status(200).json({ Alert: `User ${username} deleted` });
+  }
+}
+
 async function GetUsers(req, res) {
   try {
     const users = await dataModel.find();
@@ -48,11 +67,12 @@ async function CreateUser(req, res) {
 }
 
 async function DeleteUser(req, res) {
-  const { id } = req.body;
+  const { id } = req.params;
+  const convertInt = String(id);
 
   if (!id) return res.status(400).json({ Alert: "ID not provided" });
 
-  const findbyID = await dataModel.findOne({ _id: id });
+  const findbyID = await dataModel.findOne({ _id: convertInt });
 
   if (!findbyID) {
     return res.status(400).json({ Alert: `User with ID ${id} not found` });
@@ -62,4 +82,26 @@ async function DeleteUser(req, res) {
   }
 }
 
-module.exports = { CreateUser, GetUsers, DeleteUser };
+async function UpdateUser(req, res) {
+  const { id } = req.params;
+  const convertedString = String(id);
+
+  if (!id) return res.status(400).json({ Alert: "ID not provided" });
+
+  const findbyID = await dataModel.findOne({ _id: convertedString });
+
+  if (!findbyID) {
+    return res.status(400).json({ Alert: `User with ID ${id} not found` });
+  } else {
+    await dataModel.updateOne({ _id: convertedString });
+    return res.status(200).json({ Alert: `User ${id} deleted` });
+  }
+}
+
+module.exports = {
+  CreateUser,
+  GetUsers,
+  DeleteUser,
+  UpdateUser,
+  FindByUsername,
+};

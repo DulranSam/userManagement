@@ -29,14 +29,11 @@ function Users() {
   async function DeleteItem(id) {
     try {
       setLoading(true);
-      await Axios.post(
-        `http://localhost:8000/main`,
-        { Headers: { "Content-Type": "multipart/form-data" } },
-        { params: id }
-      )
+      await Axios.post(`http://localhost:8000/main/${id}`)
         .then((r) => {
           if (r.status === 200) {
-            setStatus(`${id} Deleted`);
+            alert(`${id} Deleted`);
+            GetUsers();
           }
         })
         .catch((e) => {
@@ -53,9 +50,7 @@ function Users() {
     e.preventDefault();
     try {
       setLoading(true);
-      const response = await Axios.get(`http://localhost:8000/main`, {
-        params: { username: search },
-      });
+      const response = await Axios.post(`http://localhost:8000/main/${search}`);
       setUsers(response.data);
     } catch (err) {
       setStatus(err.response.data);
@@ -88,7 +83,7 @@ function Users() {
           <br />
           <h1>ID {x._id}</h1>
           <p>Username {x.username}</p>
-          {/* Do not display the password for security reasons */}
+          {/* Not displaying password security reasons */}
           <p>Mail {x.mail}</p>
           <br />
         </div>
@@ -96,7 +91,7 @@ function Users() {
       <p>{error !== "" ? error : ""}</p>
       <p>{status && typeof status === "object" ? status.Alert : status}</p>
       <p>
-        Not registered yet? <Link to="/register">Click Here</Link>
+        Want to add some users ? <Link to="/register">Click Here</Link>
       </p>
     </div>
   );

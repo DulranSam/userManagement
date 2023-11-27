@@ -52,6 +52,7 @@ const Register = () => {
           name="username"
           placeholder="Enter Username"
           type="text"
+          required
         />
         <input
           onChange={handleInputChange}
@@ -59,6 +60,7 @@ const Register = () => {
           name="password"
           placeholder="Enter Password"
           type="password"
+          required
         />
         <input
           onChange={handleInputChange}
@@ -66,6 +68,7 @@ const Register = () => {
           name="mail"
           placeholder="Enter mail"
           type="email"
+          required
         />
         <input
           onChange={(e) => {
